@@ -138,6 +138,7 @@ namespace Ecommerce.Repositries
                     throw new Exception("Cart is empty");
                 var pendingRecord = _applicationDb.OrderStatuses.FirstOrDefault(s => s.StatusName == "Pending");
                 if (pendingRecord is null)
+
                     throw new Exception("Order Status does not have pending status");
                 var order = new Order
                 {
