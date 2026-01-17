@@ -14,8 +14,8 @@ namespace Ecommerce.Repositries
             UserManager<IdentityUser> userManager)
         {
             _applicationDb = applicationDb;
-            _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
         public  async Task<int> AddItem(int bookId, int qty)
         {
@@ -144,17 +144,17 @@ namespace Ecommerce.Repositries
                 {
                     UserId = UserId,
                     CreateDate = DateTime.UtcNow,
-                    Name= model.Name,
+                    Name = model.Name,
                     Email = model.Email,
                     MobileNumber = model.MobileNumber,
                     Payment = model.Payment,
                     Address = model.Address,
-                    IsPaid= false,
+                    IsPaid = false,
                     OrderStatusId = pendingRecord.Id
                 };
                 _applicationDb.Orders.Add(order);
                 _applicationDb.SaveChanges();
-                foreach(var item in cartDetail)
+                    foreach (var item in cartDetail)
                 {
                     var orderDetail = new OrderDetail
                     {

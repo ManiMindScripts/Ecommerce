@@ -1,0 +1,24 @@
+﻿@model Ecommerce.Models.DTOs.UpdateOrderModelStatus
+@{
+    ViewData["Title"] = "Update Status";
+}
+<h2 class="text-center">Update Payment Status</h2>
+<a asp-action="AllOrders" class="my-2 btn btn-primary">Back</a>
+
+<form style="width:50%" asp-action="UpdatePaymentStatus" class="pt-2">
+    <input type="hidden" asp-for="orderId"/>
+    <div class="mb-2">
+        <label>Payment Methods</label>
+        <select class="form-control" asp-for="OrderStatusId" asp-items="@Model.OrderStatusList">
+            <option value="">Select payment Methods</option>
+        </select>
+        <span asp-validation-for="OrderStatusId" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+    @if(TempData["msg"] != null)
+        {
+            <div class="text-info my-2">
+                @TempData["msg"]
+            </div>
+        }
+    </form>
