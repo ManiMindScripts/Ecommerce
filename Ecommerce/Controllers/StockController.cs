@@ -17,5 +17,30 @@ namespace Ecommerce.Controllers
             var stocks = await _stockRepo.GetStocks(sTerm);
             return View(stocks);
         }
+        public async Task<IActionResult> ManageStock(int bookId)
+        {
+            var existingStock = await _stockRepo.GetStockByBookId(bookId);
+            var stock = new StockDto
+            {
+                BookId = bookId,
+                Qunatity = existingStock != null ? existingStock.Quantity : 0
+            };
+            return View(stock);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ManageStock(StockDto stock)
+        {
+            if (!ModelState.IsValid)
+                return View(stock);
+            try {
+                await _stockRepo.ManageStock(stock);
+                TempData["msg"] = "Stock Updated Successfuly";
+            }
+            catch (Exception ex)
+            {
+                TempData["errmsg"] = "Somethnig went wrong";
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -40,7 +40,7 @@ namespace Ecommerce.Repositries
                                 {
                                     BookId = book.Id,
                                     BookName = book.BookName,
-                                    Quantit = bookStock != null ? 0 : bookStock.Quantity,
+                                    Quantit = bookStock != null ? bookStock.Quantity : 0,
                                 }).ToListAsync();
             return stocks;
         }
