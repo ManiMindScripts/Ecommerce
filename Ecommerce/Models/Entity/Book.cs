@@ -21,7 +21,7 @@ namespace Ecommerce.Models.Entity
         public List<OrderDetail> OrderDetails { get; set; }
 
         public List<CartDetails> CartDetails { get; set;}
-
+        public Stock Stock { get; set;}
         [NotMapped]
         public string GenreName { get; set;}
     }

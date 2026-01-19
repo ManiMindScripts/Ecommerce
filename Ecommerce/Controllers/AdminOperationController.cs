@@ -25,7 +25,7 @@ namespace Ecommerce.Controllers
             {
                 await _userOrderRepo.TogglePaymentStatus(orderId);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 
             }

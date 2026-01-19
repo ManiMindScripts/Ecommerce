@@ -46,7 +46,7 @@ namespace Ecommerce.Repositries
             {
                 throw new InvalidOperationException($"Order with id:{orderId} does not exist");
             }
-            order.IsPaid = order.IsPaid;
+            order.IsPaid = !order.IsPaid;
             await _db.SaveChangesAsync();
         }
 
