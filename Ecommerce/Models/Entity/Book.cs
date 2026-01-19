@@ -17,6 +17,7 @@ namespace Ecommerce.Models.Entity
         public string? Image { get; set; }
         [Required]
         public int GenreId { get; set;}
+        public int Quantity { get; set;}
         public Genre Genre { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
 

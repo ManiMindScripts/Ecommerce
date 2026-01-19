@@ -22,6 +22,10 @@ namespace Ecommerce.Repositries
                          _dbContext.Books
                          join genre in _dbContext.Genres
                          on book.GenreId equals genre.Id
+                         join stock in _dbContext.Stocks
+                         on book.Id equals stock.BookId
+                         into book_stocks
+                         from boookWithStock in book_stocks.DefaultIfEmpty()
                          where
                          (
                          string.IsNullOrWhiteSpace(sTerm) ||(book !=null && book.BookName.ToLower().StartsWith(sTerm)) 
@@ -36,6 +40,7 @@ namespace Ecommerce.Repositries
                              GenreId = book.GenreId,
                              Price = book.Price,
                              GenreName = genre.GenreName,
+                             Quantity = boookWithStock == null ? 0 : boookWithStock.Quantity,
                          }
                         ).ToListAsync();
             return books;
