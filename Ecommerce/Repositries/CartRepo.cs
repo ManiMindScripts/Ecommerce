@@ -24,7 +24,7 @@ namespace Ecommerce.Repositries
             try
             {
                 if (string.IsNullOrEmpty(UserId))
-                    throw new Exception("User is not logged in");
+                    throw new UnauthorizedAccessException("User is not logged in");
                 var cart = await GetCart(UserId);
                 if (cart is null)
                 {
@@ -68,15 +68,15 @@ namespace Ecommerce.Repositries
             try
             {
                 if (string.IsNullOrEmpty(UserId))
-                    throw new Exception("User is not logged-In");
+                    throw new UnauthorizedAccessException("User is not logged-In");
                 var cart = await GetCart(UserId);
                 if (cart is null)
-                    throw new Exception("Cart is Empty");
+                    throw new InvalidOperationException("Cart is Empty");
                 _applicationDb.SaveChanges();
                 //Cart Detail start from here
                 var cartItem = _applicationDb.CartDetails.FirstOrDefault(a => a.ShoppingCartId == cart.Id && a.BookId == bookId);
                 if(cartItem is null)
-                    throw new Exception("No Items in Cart");
+                    throw new InvalidOperationException("No Items in Cart");
               else if (cartItem.Quantity ==1)
                     _applicationDb.CartDetails.Remove(cartItem);
                 else
@@ -93,8 +93,11 @@ namespace Ecommerce.Repositries
         {
             var UserId = GetUserId();
             if (UserId == null)
-                throw new Exception("Invalid Userid");
+                throw new InvalidOperationException("Invalid Userid");
             var shoppingCart = await _applicationDb.shoppingCarts
+                                  .Include(a => a.CartDetails)
+                                  .ThenInclude(a => a.Book)
+                                  .ThenInclude(a => a.Stock)
                                   .Include(a => a.CartDetails)
                                   .ThenInclude(a => a.Book)
                                   .ThenInclude(a => a.Genre)
@@ -128,18 +131,18 @@ namespace Ecommerce.Repositries
                 //Logic: move data from carddetail to order,order detail then we will remove card detail
                 var UserId = GetUserId();
                 if (string.IsNullOrEmpty(UserId))
-                    throw new Exception("User is not Logges-in");
+                    throw new UnauthorizedAccessException("User is not Logges-in");
                 var cart = await GetCart(UserId);
                 if (cart is null)
-                    throw new Exception("Cart is empty");
+                    throw new InvalidOperationException("Cart is empty");
                 var cartDetail = _applicationDb.CartDetails
                                  .Where(a => a.ShoppingCartId == cart.Id).ToList();
                 if (cartDetail.Count == 0)
-                    throw new Exception("Cart is empty");
+                    throw new InvalidOperationException("Cart is empty");
                 var pendingRecord = _applicationDb.OrderStatuses.FirstOrDefault(s => s.StatusName == "Pending");
                 if (pendingRecord is null)
 
-                    throw new Exception("Order Status does not have pending status");
+                    throw new InvalidOperationException("Order Status does not have pending status");
                 var order = new Order
                 {
                     UserId = UserId,
@@ -164,6 +167,16 @@ namespace Ecommerce.Repositries
                         Unitprice = item.UnitPrice
                     };
                     _applicationDb.OrderDetails.Add(orderDetail);
+                    var stock = await _applicationDb.Stocks.FirstOrDefaultAsync(a => a.BookId == item.BookId);
+                    if (stock is null)
+                    {
+                        throw new InvalidOperationException("Stock is null");
+                    }
+                    if(item.Quantity > stock.Quantity)
+                    {
+                        throw new InvalidOperationException($"only {stock.Quantity} item(s) are available in stock");
+                    }
+                    stock.Quantity = item.Quantity;
                 }
                 _applicationDb.SaveChanges();
                 _applicationDb.CartDetails.RemoveRange(cartDetail);
