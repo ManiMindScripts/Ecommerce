@@ -22,6 +22,7 @@ builder.Services.AddTransient<IHomeRepo, HomeRepo>();
 builder.Services.AddTransient<ICartRepo, CartRepo>();
 builder.Services.AddTransient<IUserOrderRepo, UserOrderRepo>();
 builder.Services.AddTransient<IStockRepo, StockRepo>();
+builder.Services.AddTransient<IGenreRepo, GenreRepo>();
 var app = builder.Build();
 //using (var scope = app.Services.CreateScope())
 //{
