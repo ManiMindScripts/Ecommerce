@@ -9,7 +9,7 @@ namespace Ecommerce.Controllers
     {
         private readonly IGenreRepo _genreRepo;
 
-        public GenreController(IGenreRepo genreRepo)
+        public GenreController(IGenreRepo genreRepo) 
         {
             _genreRepo = genreRepo;
         }
